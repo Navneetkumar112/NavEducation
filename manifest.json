@@ -1,0 +1,22 @@
+{
+  "name": "Navneet's Premium Page",
+  "short_name": "NavneetPage",
+  "description": "A premium personalized web page for Navneet.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#764ba2",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/667eea/ffffff?text=NP",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://placehold.co/512x512/667eea/ffffff?text=NP",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
+
