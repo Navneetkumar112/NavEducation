@@ -1,1 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Awesome Premium Page</title>
+    <!-- PWA: Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <!-- PWA: Theme Color for browser UI -->
+    <meta name="theme-color" content="#667eea">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Inter font for a modern look */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Premium Background Gradient */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* A nice purple-blue gradient */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Full viewport height */
+            padding: 1.5rem; /* Slightly more padding */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        /* Modal specific styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Darker overlay for premium feel */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top */
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 2.5rem; /* More padding */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); /* Stronger, diffused shadow */
+            text-align: center;
+            max-width: 90%; /* Responsive width */
+            width: 450px; /* Slightly wider */
+            position: relative;
+            animation: fadeInScale 0.4s ease-out; /* Improved animation */
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        /* Button gradient base style */
+        .btn-gradient-blue {
+            background: linear-gradient(45deg, #4F46E5, #6366F1);
+        }
+        .btn-gradient-blue:hover {
+            background: linear-gradient(45deg, #6366F1, #4F46E5);
+        }
+        .btn-gradient-green {
+            background: linear-gradient(45deg, #10B981, #34D399);
+        }
+        .btn-gradient-green:hover {
+            background: linear-gradient(45deg, #34D399, #10B981);
+        }
+        .btn-gradient-purple {
+            background: linear-gradient(45deg, #8B5CF6, #A78BFA);
+        }
+        .btn-gradient-purple:hover {
+            background: linear-gradient(45deg, #A78BFA, #8B5CF6);
+        }
+        .btn-gradient-pink {
+            background: linear-gradient(45deg, #EC4899, #F472B6);
+        }
+        .btn-gradient-pink:hover {
+            background: linear-gradient(45deg, #F472B6, #EC4899);
+        }
+        .btn-gradient-red {
+            background: linear-gradient(45deg, #EF4444, #F87171);
+        }
+        .btn-gradient-red:hover {
+            background: linear-gradient(45deg, #F87171, #EF4444);
+        }
 
+        /* Navneet Bubble specific styles */
+        .navneet-bubble {
+            position: fixed;
+            top: 2rem; /* Changed from bottom to top */
+            right: 2rem; /* 8 units from right */
+            width: 5rem; /* w-20 (80px) */
+            height: 5rem; /* h-20 (80px) */
+            border-radius: 9999px; /* rounded-full */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.125rem; /* text-lg */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+            z-index: 999; /* Ensure it's above other content */
+            /* Initial background gradient - will be set by JS */
+            background: linear-gradient(45deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7);
+            /* Transition for background (color change) */
+            transition: background 0.5s ease-out;
+        }
+
+        /* Class for manual rotation - now only for rotation */
+        .navneet-bubble.rotate-bubble {
+            transform: rotate(360deg);
+            transition: transform 5s ease-out; /* Rotation for 5s */
+        }
+
+        /* Clock container styles */
+        .clock-container {
+            position: relative;
+            width: 150px; /* Fixed width for the clock image */
+            height: 150px; /* Fixed height for the clock image */
+            margin: 0 auto 1.5rem; /* Center and add margin below */
+        }
+
+        .clock-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensure the image fits without cropping */
+        }
+
+        .live-clock-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the text precisely */
+            font-size: 1.75rem; /* text-3xl */
+            font-weight: bold; /* font-bold */
+            background: linear-gradient(45deg, #4F46E5, #6366F1); /* Blue gradient for clock text */
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle shadow for readability */
+            letter-spacing: 0.05em; /* tracking-wide */
+        }
+
+        /* Chat Section specific styles */
+        .chat-container {
+            background-color: #f8fafc; /* Light gray background */
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); /* Inner shadow */
+            margin-top: 2rem;
+            max-height: 400px; /* Max height for scrollable chat */
+            display: flex;
+            flex-direction: column;
+        }
+        .messages-display {
+            flex-grow: 1;
+            overflow-y: auto; /* Scrollable message area */
+            padding: 0.5rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+            height: 200px; /* Fixed height for chat messages */
+        }
+        .message-bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            margin-bottom: 0.5rem;
+            max-width: 80%;
+            word-wrap: break-word; /* Break long words */
+        }
+        .message-bubble.sent {
+            background-color: #d1fae5; /* Light green for sent messages */
+            align-self: flex-end; /* Align sent messages to right */
+            margin-left: auto; /* Push to right */
+        }
+        .message-bubble.received {
+            background-color: #e0f2fe; /* Light blue for received messages */
+            align-self: flex-start; /* Align received messages to left */
+            margin-right: auto; /* Push to left */
+        }
+        .message-bubble .sender-info {
+            font-size: 0.75rem; /* text-xs */
+            color: #6b7280; /* gray-500 */
+            margin-bottom: 0.25rem;
+        }
+        .message-bubble .message-text {
+            font-size: 0.95rem; /* text-sm */
+            color: #374151; /* gray-700 */
+        }
+
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 640px) {
+            .navneet-bubble {
+                width: 4rem; /* Smaller on mobile */
+                height: 4rem;
+                font-size: 0.875rem; /* text-base */
+                top: 1rem; /* Adjusted for mobile */
+                right: 1rem;
+            }
+            .clock-container {
+                width: 120px; /* Smaller clock on mobile */
+                height: 120px;
+            }
+            .live-clock-text {
+                font-size: 1.5rem; /* Smaller text on mobile */
+            }
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="p-6">
+
+    <!-- Welcome Modal (Pop-up) -->
+    <div id="welcomeModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 class="text-4xl font-extrabold text-blue-700 mb-4">
+                Welcome Navneet! 👋
+            </h2>
+            <p class="text-gray-700 mb-6 text-lg">
+                It's great to see you here! Enjoy your premium visit.
+            </p>
+            <button id="closeModalBtn" class="btn-gradient-red text-white font-bold py-2 px-5 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Main container for the content, centered and styled -->
+    <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-lg w-full text-center border border-gray-200">
+        <!-- User's Image (Profile Picture) -->
+        <div class="relative w-40 h-40 mx-auto rounded-full overflow-hidden shadow-xl border-4 border-white mb-6">
+            <img src="https://content-fetcher.web.app/api/file?id=image.png-38a6c79f-d6f4-47de-90dc-f383c822670f" alt="Navneet's Profile" class="w-full h-full object-cover">
+        </div>
+        <!-- User's Name -->
+        <div class="text-2xl font-bold text-gray-800 mb-6">Navneet</div>
+
+        <!-- Live Clock in an image container -->
+        <div class="clock-container">
+            <img src="https://placehold.co/150x150/f0f2f5/000000?text=Clock" alt="Clock Image" class="clock-image">
+            <div id="liveClock" class="live-clock-text">
+                <!-- Time will be inserted here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Main heading with rounded corners and bold text -->
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-5 rounded-lg">
+            Welcome to Our Premium Page!
+        </h1>
+
+        <!-- Paragraph for some descriptive text -->
+        <p class="text-gray-700 mb-8 leading-relaxed text-lg">
+            This is a super cool and responsive HTML page, designed with Tailwind CSS for a sleek and premium look. It's ready for you to add your awesome content!
+        </p>
+
+        <!-- A stylish button with rounded corners and hover effects -->
+        <button id="getStartedBtn" class="btn-gradient-blue text-white font-bold py-3 px-7 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg mb-4">
+            Get Started
+        </button>
+
+        <!-- A new button-like link to Google -->
+        <a href="https://www.google.com" target="_blank" class="inline-flex items-center justify-center btn-gradient-green text-white font-bold py-3 px-7 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.22-1.79H12v-.01c.01.01.01.01.01.01H4.22C4.08 10.79 4 11.38 4 12c0 4.08 3.05 7.44 7 7.93v-2.01l-1-1v3.02zM12 4.07V6h2V4.07c-1.9-.22-3.66-.22-5.46 0zM17.93 11c-.01 0-.01 0-.02 0H12V4.07c.92.11 1.8.31 2.62.59l-1.42 1.42c-.44.44-.7.98-.7 1.57V11h5.43zm-4.01 0h-1.92l-1.42 1.42c-.44.44-.7.98-.7 1.57v2.42h5.43c.01 0 .01 0 .02 0H12v-5.41zm-1.01 6.91v-2.42c0-.59.26-1.13.7-1.57l1.42-1.42H12v-2.42h5.43c.01 0 .01 0 .02 0H12v5.41zm-1.01 0v-2.42c0-.59.26-1.13.7-1.57l1.42-1.42H12v-2.42h5.43c.01 0 .01 0 .02 0H12v5.41z"/>
+            </svg>
+            Go to Google
+        </a>
+
+        <!-- A new button-like link to PW App (Google Play Store) -->
+        <a href="https://play.google.com/store/apps/details/Physics_Wallah?id=xyz.penpencil.physicswala&hl=en_GB" target="_blank" class="inline-flex items-center justify-center btn-gradient-purple text-white font-bold py-3 px-7 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg mb-4">
+            <!-- SVG Icon for PW (representing a book/education) -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"/>
+            </svg>
+            Go to PW App
+        </a>
+
+        <!-- A new button for Camera -->
+        <button id="cameraBtn" class="inline-flex items-center justify-center btn-gradient-pink text-white font-bold py-3 px-7 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg mb-6">
+            <!-- SVG Icon for Camera -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Camera
+        </button>
+
+        <!-- Hidden input for camera/file selection -->
+        <input type="file" accept="image/*" capture="camera" id="cameraInput" class="hidden">
+
+
+        <!-- Button to toggle HTML Notes visibility -->
+        <button id="toggleNotesBtn" class="btn-gradient-purple text-white font-bold py-3 px-7 rounded-full transition duration-300 ease-in-out transform hover:scale-105 shadow-lg mb-6 flex items-center justify-center w-auto mx-auto">
+            <!-- SVG Icon for notes toggle -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            Show HTML Notes
+        </button>
+
+        <!-- Section for Basic HTML Notes, initially hidden -->
+        <div id="htmlNotes" class="bg-gray-50 p-5 rounded-2xl shadow-xl mt-8 text-left hidden border border-gray-100">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center">
+                <!-- SVG Icon for notes (inside the notes section) -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                Basic HTML Notes
+            </h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-2 text-base">
+                <li><strong class="text-gray-900">&lt;html&gt;:</strong> Sabse upar ka element.</li>
+                <li><strong class="text-gray-900">&lt;head&gt;:</strong> Page ki meta-info (title, CSS links) rakhta hai.</li>
+                <li><strong class="text-gray-900">&lt;body&gt;:</strong> Jo kuch bhi page pe dikhta hai, wo yahan hota hai.</li>
+                <li><strong class="text-gray-900">&lt;h1&gt; to &lt;h6&gt;:</strong> Headings ke liye, &lt;h1&gt; sabse bada.</li>
+                <li><strong class="text-gray-900">&lt;p&gt;:</strong> Paragraphs ke liye.</li>
+                <li><strong class="text-gray-900">&lt;a&gt;:</strong> Links banane ke liye.</li>
+                <li><strong class="text-gray-900">&lt;div&gt;:</strong> Content ko group karne ke liye.</li>
+            </ul>
+        </div>
+
+        <!-- Chat Section -->
+        <div id="chatSection" class="chat-container mt-8 text-left">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Live Chat (Firebase Backend)</h2>
+            <p class="text-sm text-gray-600 mb-4 text-center">
+                Your User ID: <span id="currentUserId" class="font-semibold text-blue-600 break-all">Loading...</span>
+            </p>
+
+            <div class="mb-4">
+                <label for="phoneNumber" class="block text-gray-700 text-sm font-bold mb-2">Phone Number (Optional):</label>
+                <input type="tel" id="phoneNumber" class="shadow appearance-none border rounded-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter phone number (optional)">
+            </div>
+
+            <div id="messagesDisplay" class="messages-display flex flex-col">
+                <!-- Chat messages will appear here -->
+            </div>
+
+            <div class="flex mt-4">
+                <input type="text" id="chatInput" class="shadow appearance-none border rounded-l-lg w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Type your message...">
+                <button id="sendMessageBtn" class="btn-gradient-blue text-white font-bold py-2 px-4 rounded-r-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
+                    Send
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Small footer text -->
+        <p class="text-gray-500 text-sm mt-10">
+            Made with ❤️ and Premium Tailwind CSS
+        </p>
+    </div>
+
+    <!-- Navneet Bubble in the corner -->
+    <div id="navneetBubble" class="navneet-bubble">
+        Navneet
+    </div>
+
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let userId = null; // To store the authenticated user's ID
+
+        // Authenticate user and set up Firestore listener
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                document.getElementById('currentUserId').textContent = userId;
+                console.log("Authenticated with user ID:", userId);
+                setupChatListener(); // Setup chat listener once authenticated
+            } else {
+                // Sign in anonymously if no initial token or user is not authenticated
+                try {
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Firebase authentication error:", error);
+                    document.getElementById('currentUserId').textContent = "Authentication Failed";
+                }
+        
